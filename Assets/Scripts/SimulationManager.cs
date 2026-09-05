@@ -99,7 +99,7 @@ public class SimulationManager : MonoBehaviour
         {
             foodSpawner.SetDrought(droughtToggled);
         }
-        ShowNotification(droughtToggled ? "Drought ON!: Drought OF!");
+        ShowNotification(droughtToggled ? "Drought ON!" : "Drought OFF!");
     }
 
     // UI
@@ -112,18 +112,16 @@ public class SimulationManager : MonoBehaviour
 
         populationCountText.text = "Prey: " + preyCount + "   Predators: " + predatorCount;
 
-        //overpopulation warning added for more realisim
+        // overpopulation warning added for more realism
         if (predatorCount == 0 && preyCount >= overpopulationThreshhold && !overpopulationWarned)
         {
-            showNotification("Overpopulated Must Add Predators.");
+            ShowNotification("Overpopulated! Must Add Predators.");
             overpopulationWarned = true;
-
         }
-        else if (preyCount < overpopulationThreshhold {
-
+        else if (preyCount < overpopulationThreshhold)
+        {
+            overpopulationWarned = false; // reset so it can warn again if it happens later
         }
-        overpopulationWarned = false; // reset in future if happens again 
-
     }
 
     void updateTraitAveragesUI()
@@ -209,3 +207,4 @@ public class SimulationManager : MonoBehaviour
 
         notificationCanvasGroup.alpha = 0f;
     }
+}
