@@ -12,10 +12,13 @@ public class Predator : MonoBehaviour
     public float maxCatchChance = 0.90f;  // best case = 90% (not a gauranteed catch)
 
     public float starveTime = 8f;         // seconds before predator starves
+    public float eatCooldown = 4f; // CHANGED: seconds predator cant hunt; add this becuase they were eating everything... 
+
 
     
     private Transform targetPrey;
     private float timeSinceLastKill = 0f;
+    private float cooldownTimer = 0f;
     private Vector2 wanderDirection;
     private float wanderTimer = 0f;
 
@@ -33,7 +36,12 @@ public class Predator : MonoBehaviour
             Die();
             return;
         }
-
+        if (cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.deltaTime;
+            Wander();
+            return;
+        }
         // Looks for prey if target is not present
         if (targetPrey == null)
         {
@@ -110,6 +118,7 @@ public class Predator : MonoBehaviour
             // Successful catch.
             preyScript.CaughtByPredator();
             timeSinceLastKill = 0f;
+            cooldownTimer = eatCooldown;
         }
         // If the catch fails, prey just lives — no penalty beyond a close call.
         // (No "predator dies on failed attempt" rule anymore — starvation is time-based now.)
