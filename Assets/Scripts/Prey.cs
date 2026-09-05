@@ -33,8 +33,7 @@ public class Prey : MonoBehaviour
             specSize = Random.Range(0.1f, 0.5f);
         }
 
-        // Visual size change QOL 
-        baseScale = transform.localScale;
+        // Visual size change QOL
         float normalizedSize = Mathf.InverseLerp(0.1f, 0.5f, specSize);
         float visualScaleFactor = Mathf.Lerp(0.7f, 1.4f, normalizedSize);
         transform.localScale = baseScale * visualScaleFactor;
@@ -179,9 +178,9 @@ public class Prey : MonoBehaviour
 
     //Generation tracking
     public int generation = 0; // inital population starts at = 0 
-    
 
-    private Vector3 baseScale; // added to inherit orignal scale before adjustment
+
+    private Vector3 baseScale = new Vector3(0.2f, 0.2f, 1f); // CHANGED: FIXED ORIGNAL SIZE 
 
     private float effectiveHungerDrainRate; //adjusted for pixel size
 
