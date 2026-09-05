@@ -33,7 +33,7 @@ public class Prey : MonoBehaviour
             specSize = Random.Range(0.1f, 0.5f);
         }
 
-        v// Visual size change QOL 
+        // Visual size change QOL 
         baseScale = transform.localScale;
         float normalizedSize = Mathf.InverseLerp(0.1f, 0.5f, specSize);
         float visualScaleFactor = Mathf.Lerp(0.7f, 1.4f, normalizedSize);
