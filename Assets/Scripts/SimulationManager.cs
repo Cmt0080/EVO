@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -21,13 +22,20 @@ public class SimulationManager : MonoBehaviour
     [Header("References")]
     public FoodSpawner foodSpawner;
 
+    [Header("Overpopulation Warning")]
+    public int overpopulationThreshhold = 300;
+    private bool overpopulationWarned = false;
+
     [Header("UI")]
     public TMP_Text populationCountText;
     public TMP_Text traitAveragesText;
+    public TMP_Text notificationText;
+    public CanvasGroup notificationCanvasGroup;
+    private Coroutine activeNotificationCoroutine;
 
 
     private List<GameObject> activePredators = new List<GameObject>();
-    private bool predatorsToggled = false;
+
 
     void Start()
     {
@@ -58,28 +66,16 @@ public class SimulationManager : MonoBehaviour
     }
 
     // Toggle Button =  PREDATORS
-    public void TogglePredators()
+    public void TogglePredators() // CHANGED: Toggle now is as many as you want; this way they die of starvation still but lead to overpopulation
     {
-        predatorsToggled = !predatorsToggled;
+        for (int i = 0; i < predatorCountWhenActive; i++)
+        {
+            Vector3 pos = RandomPointInField();
+            GameObject predator = Instantiate(predatorPrefab, pos, Quaternion.identity);
+            activePredators.Add(predator);
+        }
 
-        if (predatorsToggled)
-        {
-            for (int i = 0; i < predatorCountWhenActive; i++)
-            {
-                Vector3 pos = RandomPointInField();
-                GameObject predator = Instantiate(predatorPrefab, pos, Quaternion.identity);
-                activePredators.Add(predator);
-            }
-        }
-        else
-        {
-            // Deletes predators from memory immediately
-            foreach (GameObject predator in activePredators)
-            {
-                if (predator != null) Destroy(predator);
-            }
-            activePredators.Clear();
-        }
+        ShowNotification("Predators Added!");
     }
 
     // Toggle Button =  SCARCITY
@@ -91,6 +87,7 @@ public class SimulationManager : MonoBehaviour
         {
             foodSpawner.SetScarcity(scarcityToggled);
         }
+        ShowNotification(scarcityToggled ? "Food Scarcity ON!" : "Food Scarcity OFF!");
     }
 
     // Toggle Button = DROUGHT
@@ -102,6 +99,7 @@ public class SimulationManager : MonoBehaviour
         {
             foodSpawner.SetDrought(droughtToggled);
         }
+        ShowNotification(droughtToggled ? "Drought ON!: Drought OF!");
     }
 
     // UI
@@ -113,6 +111,19 @@ public class SimulationManager : MonoBehaviour
         int predatorCount = GameObject.FindGameObjectsWithTag("Predator").Length;
 
         populationCountText.text = "Prey: " + preyCount + "   Predators: " + predatorCount;
+
+        //overpopulation warning added for more realisim
+        if (predatorCount == 0 && preyCount >= overpopulationThreshhold && !overpopulationWarned)
+        {
+            showNotification("Overpopulated Must Add Predators.");
+            overpopulationWarned = true;
+
+        }
+        else if (preyCount < overpopulationThreshhold {
+
+        }
+        overpopulationWarned = false; // reset in future if happens again 
+
     }
 
     void updateTraitAveragesUI()
@@ -160,10 +171,41 @@ public class SimulationManager : MonoBehaviour
         float sizePercent = Mathf.InverseLerp(0.1f, 0.5f, avgSize) * 100f;
 
         traitAveragesText.text =
-                "Speed" + speedPercent.ToString("F0") + "%\n" +
-                "Vision" + visionPercent.ToString("F0") + "%\n" +
-                "Food Efficiency" + foodPercent.ToString("F0") + "%\n" +
-                "Size" + sizePercent.ToString("F0") + "%\n" +
-                "Generation" + highestGeneration;
+                "Speed: " + speedPercent.ToString("F0") + "%\n" +
+                "Vision: " + visionPercent.ToString("F0") + "%\n" +
+                "Food Efficiency: " + foodPercent.ToString("F0") + "%\n" +
+                "Size: " + sizePercent.ToString("F0") + "%\n" +
+                "Generation: " + highestGeneration;
     }
-}
+
+    //show message for a few seconds and then fade...
+    public void ShowNotification(string message)
+    {
+        if (notificationText == null || notificationCanvasGroup == null) return;
+
+        notificationText.text = message;
+
+        if (activeNotificationCoroutine != null)
+        {
+            StopCoroutine(activeNotificationCoroutine);
+        }
+        activeNotificationCoroutine = StartCoroutine(NotificationFadeRoutine());
+    }
+
+    private IEnumerator NotificationFadeRoutine()
+    {
+        notificationCanvasGroup.alpha = 1f;
+
+        yield return new WaitForSeconds(1.5f);
+
+        float fadeDuration = 1f;
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            notificationCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+            yield return null;
+        }
+
+        notificationCanvasGroup.alpha = 0f;
+    }
