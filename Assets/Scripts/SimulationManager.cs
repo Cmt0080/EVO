@@ -25,7 +25,7 @@ public class SimulationManager : MonoBehaviour
     public TMP_Text populationCountText;
     public TMP_Text traitAveragesText;
 
-   
+
     private List<GameObject> activePredators = new List<GameObject>();
     private bool predatorsToggled = false;
 
@@ -37,9 +37,10 @@ public class SimulationManager : MonoBehaviour
     void Update()
     {
         UpdatePopulationUI();
+        updateTraitAveragesUI();
     }
 
-   // Initial Spawn
+    // Initial Spawn
     void SpawnInitialPrey()
     {
         for (int i = 0; i < initialPreyCount; i++)
@@ -112,5 +113,57 @@ public class SimulationManager : MonoBehaviour
         int predatorCount = GameObject.FindGameObjectsWithTag("Predator").Length;
 
         populationCountText.text = "Prey: " + preyCount + "   Predators: " + predatorCount;
+    }
+
+    void updateTraitAveragesUI()
+    {
+        if (traitAveragesText == null) return;
+
+        GameObject[] preyList = GameObject.FindGameObjectsWithTag("Prey");
+        if (preyList.Length == 0)
+        {
+            traitAveragesText.text = "Population has gone Extinct Please Retry";
+            return;
+        }
+
+        float totalSpeed = 0f;
+        float totalVision = 0f;
+        float totalFoodEfficiency = 0f;
+        float totalSize = 0f;
+        int highestGeneration = 0;
+
+        foreach (GameObject preyObj in preyList)
+        {
+            Prey p = preyObj.GetComponent<Prey>();
+            if (p == null) continue;
+
+            totalSpeed += p.moveSpeed;
+            totalVision += p.visionRange;
+            totalFoodEfficiency += p.foodEfficiency;
+            totalSize += p.specSize;
+
+            if (p.generation > highestGeneration)
+            {
+                highestGeneration = p.generation;
+            }
+
+        }
+
+        float avgSpeed = totalSpeed / preyList.Length;
+        float avgVision = totalVision / preyList.Length;
+        float avgFoodEfficiency = totalFoodEfficiency / preyList.Length;
+        float avgSize = totalSize / preyList.Length;
+
+        float speedPercent = Mathf.InverseLerp(0.1f, 2f, avgSpeed) * 100f;
+        float visionPercent = Mathf.InverseLerp(0.1f, 2f, avgVision) * 100f;
+        float foodPercent = Mathf.InverseLerp(0.1f, 2f, avgFoodEfficiency) * 100f;
+        float sizePercent = Mathf.InverseLerp(0.1f, 0.5f, avgSize) * 100f;
+
+        traitAveragesText.text =
+                "Speed" + speedPercent.ToString("F0") + "%\n" +
+                "Vision" + visionPercent.ToString("F0") + "%\n" +
+                "Food Efficiency" + foodPercent.ToString("F0") + "%\n" +
+                "Size" + sizePercent.ToString("F0") + "%\n" +
+                "Generation" + highestGeneration;
     }
 }
