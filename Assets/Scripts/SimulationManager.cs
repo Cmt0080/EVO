@@ -21,6 +21,8 @@ public class SimulationManager : MonoBehaviour
 
     [Header("References")]
     public FoodSpawner foodSpawner;
+    public GameObject startScreenPanel;
+
 
     [Header("Overpopulation Warning")]
     public int overpopulationThreshhold = 300;
@@ -39,8 +41,18 @@ public class SimulationManager : MonoBehaviour
 
     void Start()
     {
+
+        SetupTraitPanelLayout();// CHANGED: Now doesnt spawn anything until play! 
+
+    }
+
+    public void Play();
+    {
+        if (startScreenPanel != null)
+        {
+            startScreenPanel.SetActive(false);
+        }
         SpawnInitialPrey();
-        SetupTraitPanelLayout();
     }
     public void RestartSimulator()
     {
@@ -150,9 +162,10 @@ public class SimulationManager : MonoBehaviour
             ShowNotification("Overpopulated! Must Add Predators.");
             overpopulationWarned = true;
         }
-        else if (preyCount < overpopulationThreshhold)
+        else if (preyCount < 150 && overpopulationWarned)
         {
-            overpopulationWarned = false; // reset so it can warn again if it happens later
+            ShowNotification("Population Levels Normal");
+            overpopulationWarned = false;
         }
     }
 
@@ -246,7 +259,6 @@ public class SimulationManager : MonoBehaviour
         "Speed: " + speedPercent.ToString("F0") + "%\n\n" +
         "Vision: " + visionPercent.ToString("F0") + "%\n\n" +
         "Food Efficiency: " + foodPercent.ToString("F0") + "%\n\n" +
-        "Size: " + sizePercent.ToString("F0") + "%\n\n\n" +
         "Generation: " + highestGeneration + "\n\n" +
         "Small: " + smallCount + "  Medium: " + mediumCount + "  Large: " + largeCount;
     }
