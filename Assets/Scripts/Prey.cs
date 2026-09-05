@@ -7,7 +7,7 @@ public class Prey : MonoBehaviour
     public float moveSpeed;       // how fast this pixel moves
     public float visionRange;     // how far it can detect predators called by Predator.cs
     public float foodEfficiency;// how much value is intaken by food eaten; future problem
-    public float specSize;
+    public float specSize; // basic tradeoff trait, bigger = more food
 
    
     private enum State { Seeking, MovingToFood, Eating, Reproducing }
@@ -26,10 +26,13 @@ public class Prey : MonoBehaviour
         // If traits weren't inherited
         // give it randomized starting traits.
         if (moveSpeed <= 0f)
+          
         {
+          
             moveSpeed = Random.Range(0.5f, 1.5f);
             visionRange = Random.Range(0.5f, 1.5f);
             foodEfficiency = Random.Range(0.5f, 1.5f);
+            specSize = Random.Range(0.1f, 0.5f);
         }
 
         PickNewWanderDirection();
@@ -157,14 +160,27 @@ public class Prey : MonoBehaviour
         offspringScript.visionRange = Mutate(visionRange);
         offspringScript.foodEfficiency = Mutate(foodEfficiency);
 
+        offspringScript.specSize = Mutate(specSize, 0.1f,0.5f);
+        offspringScript.generation = generation + 1;
+
         currentState = State.Seeking;
     }
 
-    float Mutate(float traitValue)
+    float Mutate(float traitValue, float minClamp =0.1f, float maxClamp = 2f)
     {
         float mutationAmount = Random.Range(-0.1f, 0.1f);
-        return Mathf.Clamp(traitValue + mutationAmount, 0.1f, 2f);
+        return Mathf.Clamp(traitValue + mutationAmount, minClamp, maxClamp);
+
     }
+
+    //Generation tracking
+    public int generation = 0; // inital population starts at = 0 
+    
+
+    private Vector3 baseScale; // added to inherit orignal scale before adjustment
+
+    private float effectiveHungerDrainRate; //adjusted for pixel size
+
 
     //DEATH STATE
     void Die()
