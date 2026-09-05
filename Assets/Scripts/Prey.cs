@@ -6,7 +6,8 @@ public class Prey : MonoBehaviour
    
     public float moveSpeed;       // how fast this pixel moves
     public float visionRange;     // how far it can detect predators called by Predator.cs
-    public float foodEfficiency;  // how much value is intaken by food eaten; future problem
+    public float foodEfficiency;// how much value is intaken by food eaten; future problem
+    public float specSize;
 
    
     private enum State { Seeking, MovingToFood, Eating, Reproducing }
@@ -145,7 +146,10 @@ public class Prey : MonoBehaviour
     {
         hunger -= 1f; // reproducing costs hunger, this to prevent a million freaking pixels and crashes
 
-        GameObject offspring = Instantiate(gameObject, transform.position, Quaternion.identity);
+        Vector2 randomOffset = Random.insideUnitCircle * 0.5f;
+        Vector3 spawnPosition = transform.position + (Vector3)randomOffset; // added to prevent clumping of species
+
+        GameObject offspring = Instantiate(gameObject, spawnPosition,Quaternion.identity);
         Prey offspringScript = offspring.GetComponent<Prey>();
 
         // Offspring traits = parent traits + small random mutation(mSpeed,vRange, and fEfficiency)
