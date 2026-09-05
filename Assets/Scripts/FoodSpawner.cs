@@ -10,7 +10,7 @@ public class FoodSpawner : MonoBehaviour
 
     [Header("Base Spawn Settings")]
     public float baseSpawnInterval = 1.5f; // the seconds between spawns under normal conditions
-    public int foodPerSpawn = 2;           // how many food items appear each spawn tick speed 
+    public int foodPerSpawn = 6;           // how many food items appear each spawn tick speed 
 
     // INTERNAL STATE
     private float spawnTimer = 0f;

@@ -26,14 +26,18 @@ public class Prey : MonoBehaviour
         // If traits weren't inherited
         // give it randomized starting traits.
         if (moveSpeed <= 0f)
-          
         {
-          
             moveSpeed = Random.Range(0.5f, 1.5f);
             visionRange = Random.Range(0.5f, 1.5f);
             foodEfficiency = Random.Range(0.5f, 1.5f);
             specSize = Random.Range(0.1f, 0.5f);
         }
+
+        v// Visual size change QOL 
+        baseScale = transform.localScale;
+        float normalizedSize = Mathf.InverseLerp(0.1f, 0.5f, specSize);
+        float visualScaleFactor = Mathf.Lerp(0.7f, 1.4f, normalizedSize);
+        transform.localScale = baseScale * visualScaleFactor;
 
         PickNewWanderDirection();
     }
