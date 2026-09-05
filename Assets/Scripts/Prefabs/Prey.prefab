@@ -108,3 +108,7 @@ MonoBehaviour:
   moveSpeed: 0
   visionRange: 0
   foodEfficiency: 0
+  specSize: 0
+  fieldMin: {x: -6, y: -4.5}
+  fieldMax: {x: 6, y: 4.5}
+  generation: 0

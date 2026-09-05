@@ -144,6 +144,17 @@ public class Predator : MonoBehaviour
     {
         float clampedX = Mathf.Clamp(transform.position.x, fieldMin.x, fieldMax.x);
         float clampedY = Mathf.Clamp(transform.position.y, fieldMin.y, fieldMax.y);
+
+        
+        if (clampedX != transform.position.x)
+        {
+            wanderDirection.x = -wanderDirection.x;
+        }
+        if (clampedY != transform.position.y)
+        {
+            wanderDirection.y = -wanderDirection.y;
+        }
+
         transform.position = new Vector3(clampedX, clampedY, transform.position.z);
     }
 

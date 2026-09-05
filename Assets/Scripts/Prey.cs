@@ -16,7 +16,7 @@ public class Prey : MonoBehaviour
    
     private float hunger = 1f;           // 1 = full, 0 = starving. Ticks down over time.
     private float hungerDrainRate = 0.02f; // how fast hunger drops per second
-    private float reproduceThreshold = 1f; // hunger value needed to trigger duplication
+    private float reproduceThreshold = 1.3f; // hunger value needed to trigger duplication
     private Transform targetFood;        // the food object this pixel is currently walking to
     private Vector2 wanderDirection;     // current random direction moving when no food is targeted
     private float wanderTimer = 0f;
@@ -112,7 +112,18 @@ public class Prey : MonoBehaviour
     {
         float clampedX = Mathf.Clamp(transform.position.x, fieldMin.x, fieldMax.x);
         float clampedY = Mathf.Clamp(transform.position.y, fieldMin.y, fieldMax.y);
-        transform.position = new Vector3(clampedX,clampedY,transform.position.z);
+
+        // If clamping actually changed the position, we hit a wall - bounce the wander direction
+        if (clampedX != transform.position.x)
+        {
+            wanderDirection.x = -wanderDirection.x;
+        }
+        if (clampedY != transform.position.y)
+        {
+            wanderDirection.y = -wanderDirection.y;
+        }
+
+        transform.position = new Vector3(clampedX, clampedY, transform.position.z);
     }
 
     // 
@@ -170,6 +181,12 @@ public class Prey : MonoBehaviour
     void Reproduce()
     {
         hunger -= 1f; // reproducing costs hunger, this to prevent a million freaking pixels and crashes
+
+        // Prevent an infinite reproduction loop if hunger is still above threshold after reproducing once
+        if (hunger >= reproduceThreshold)
+        {
+            hunger = reproduceThreshold - 0.1f;
+        }
 
         Vector2 randomOffset = Random.insideUnitCircle * 0.5f;
         Vector3 spawnPosition = transform.position + (Vector3)randomOffset; // added to prevent clumping of species

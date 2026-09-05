@@ -5,8 +5,8 @@ public class FoodSpawner : MonoBehaviour
 {
     [Header("Setup")]
     public GameObject foodPrefab;
-    public Vector2 fieldMin = new Vector2(-8f, -4.5f); // bottom-left corner
-    public Vector2 fieldMax = new Vector2(8f, 4.5f);   // top-right corner 
+    public Vector2 fieldMin = new Vector2(-6f, -4.5f); // bottom-left corner
+    public Vector2 fieldMax = new Vector2(6f, 4.5f);   // top-right corner
 
     [Header("Base Spawn Settings")]
     public float baseSpawnInterval = 0.5f; // the seconds between spawns under normal conditions

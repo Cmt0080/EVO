@@ -189,6 +189,9 @@ public class SimulationManager : MonoBehaviour
         float totalFoodEfficiency = 0f;
         float totalSize = 0f;
         int highestGeneration = 0;
+        int smallCount = 0;
+        int mediumCount = 0;
+        int largeCount = 0;
 
         foreach (GameObject preyObj in preyList)
         {
@@ -199,6 +202,28 @@ public class SimulationManager : MonoBehaviour
             totalVision += p.visionRange;
             totalFoodEfficiency += p.foodEfficiency;
             totalSize += p.specSize;
+
+
+            totalSize += p.specSize;
+
+            // Sorts prey into a size category based on its specSize (range is 0.1 to 0.5)
+            if (p.specSize < 0.23f)
+            {
+                smallCount++;
+            }
+            else if (p.specSize < 0.37f)
+            {
+                mediumCount++;
+            }
+            else
+            {
+                largeCount++;
+            }
+
+            if (p.generation > highestGeneration)
+            {
+                highestGeneration = p.generation;
+            }
 
             if (p.generation > highestGeneration)
             {
@@ -218,11 +243,12 @@ public class SimulationManager : MonoBehaviour
         float sizePercent = Mathf.InverseLerp(0.1f, 0.5f, avgSize) * 100f;
 
         traitAveragesText.text =
-        "Speed: " + speedPercent.ToString("F0") + "%\n\n\n" +
-        "Vision: " + visionPercent.ToString("F0") + "%\n\n\n" +
-        "Food Efficiency: " + foodPercent.ToString("F0") + "%\n\n\n" +
+        "Speed: " + speedPercent.ToString("F0") + "%\n\n" +
+        "Vision: " + visionPercent.ToString("F0") + "%\n\n" +
+        "Food Efficiency: " + foodPercent.ToString("F0") + "%\n\n" +
         "Size: " + sizePercent.ToString("F0") + "%\n\n\n" +
-        "Generation: " + highestGeneration;
+        "Generation: " + highestGeneration + "\n\n" +
+        "Small: " + smallCount + "  Medium: " + mediumCount + "  Large: " + largeCount;
     }
 
     //show message for a few seconds and then fade...
