@@ -11,11 +11,12 @@ public class Predator : MonoBehaviour
     public float minCatchChance = 0.15f;  // worst case = 15% 
     public float maxCatchChance = 0.90f;  // best case = 90% (not a gauranteed catch)
 
-    public float starveTime = 15f;         // seconds before predator starves
+    public float starveTime = 11f;         // seconds before predator starves
     public float eatCooldown = 2f; // CHANGED: seconds predator cant hunt; add this becuase they were eating everything... 
 
+    public Vector2 fieldMin = new Vector2(-6f, -4.5f);
+    public Vector2 fieldMax = new Vector2(6f, 4.5f);
 
-    
     private Transform targetPrey;
     private float timeSinceLastKill = 0f;
     private float cooldownTimer = 0f;
@@ -84,6 +85,7 @@ public class Predator : MonoBehaviour
 
         Vector3 direction = (targetPrey.position - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
+        ClampToField();
 
         float distance = Vector3.Distance(transform.position, targetPrey.position);
         if (distance <= catchDistance)
@@ -135,6 +137,14 @@ public class Predator : MonoBehaviour
             PickNewWanderDirection();
         }
         transform.position += (Vector3)(wanderDirection * moveSpeed * Time.deltaTime);
+        ClampToField();
+    }
+
+    void ClampToField()
+    {
+        float clampedX = Mathf.Clamp(transform.position.x, fieldMin.x, fieldMax.x);
+        float clampedY = Mathf.Clamp(transform.position.y, fieldMin.y, fieldMax.y);
+        transform.position = new Vector3(clampedX, clampedY, transform.position.z);
     }
 
     void PickNewWanderDirection()

@@ -21,6 +21,9 @@ public class Prey : MonoBehaviour
     private Vector2 wanderDirection;     // current random direction moving when no food is targeted
     private float wanderTimer = 0f;
 
+    public Vector2 fieldMin = new Vector2(-6f, -4.5f);
+    public Vector2 fieldMax = new Vector2(6f, 4.5f);
+
     void Start()
     {
         // If traits weren't inherited
@@ -95,6 +98,7 @@ public class Prey : MonoBehaviour
         }
 
         transform.position += (Vector3)(wanderDirection * moveSpeed * Time.deltaTime);
+        ClampToField();
     }
 
     void PickNewWanderDirection()
@@ -102,6 +106,13 @@ public class Prey : MonoBehaviour
         float angle = Random.Range(0f, Mathf.PI * 2f);
         wanderDirection = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         wanderTimer = Random.Range(1f, 3f); // wander in this direction for 1-3 seconds
+    }
+
+    void ClampToField()
+    {
+        float clampedX = Mathf.Clamp(transform.position.x, fieldMin.x, fieldMax.x);
+        float clampedY = Mathf.Clamp(transform.position.y, fieldMin.y, fieldMax.y);
+        transform.position = new Vector3(clampedX,clampedY,transform.position.z);
     }
 
     // 
@@ -116,6 +127,7 @@ public class Prey : MonoBehaviour
 
         Vector3 direction = (targetFood.position - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
+        ClampToField();
 
         float distance = Vector3.Distance(transform.position, targetFood.position);
         if (distance < 0.2f)
