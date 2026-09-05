@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 
 public class SimulationManager : MonoBehaviour
@@ -22,7 +22,8 @@ public class SimulationManager : MonoBehaviour
     public FoodSpawner foodSpawner;
 
     [Header("UI")]
-    public Text populationCountText; 
+    public TMP_Text populationCountText;
+    public TMP_Text traitAveragesText;
 
    
     private List<GameObject> activePredators = new List<GameObject>();
