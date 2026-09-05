@@ -40,6 +40,7 @@ public class SimulationManager : MonoBehaviour
     void Start()
     {
         SpawnInitialPrey();
+        SetupTraitPanelLayout();
     }
     public void RestartSimulator()
     {
@@ -155,6 +156,23 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
+    // Adjusts trait readout's position and size so it doesn't overlap the header becuase it was doing it bad! 
+    void SetupTraitPanelLayout()
+    {
+        if (traitAveragesText == null) return;
+
+        RectTransform rect = traitAveragesText.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            
+            Vector2 pos = rect.anchoredPosition;
+            pos.y -= 200f;
+            rect.anchoredPosition = pos;
+        }
+
+        traitAveragesText.fontSize = 70f;
+    }
+
     void updateTraitAveragesUI()
     {
         if (traitAveragesText == null) return;
@@ -200,11 +218,11 @@ public class SimulationManager : MonoBehaviour
         float sizePercent = Mathf.InverseLerp(0.1f, 0.5f, avgSize) * 100f;
 
         traitAveragesText.text =
-                "Speed: " + speedPercent.ToString("F0") + "%\n" +
-                "Vision: " + visionPercent.ToString("F0") + "%\n" +
-                "Food Efficiency: " + foodPercent.ToString("F0") + "%\n" +
-                "Size: " + sizePercent.ToString("F0") + "%\n" +
-                "Generation: " + highestGeneration;
+        "Speed: " + speedPercent.ToString("F0") + "%\n\n\n" +
+        "Vision: " + visionPercent.ToString("F0") + "%\n\n\n" +
+        "Food Efficiency: " + foodPercent.ToString("F0") + "%\n\n\n" +
+        "Size: " + sizePercent.ToString("F0") + "%\n\n\n" +
+        "Generation: " + highestGeneration;
     }
 
     //show message for a few seconds and then fade...
