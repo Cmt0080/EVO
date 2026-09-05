@@ -9,7 +9,7 @@ public class FoodSpawner : MonoBehaviour
     public Vector2 fieldMax = new Vector2(8f, 4.5f);   // top-right corner 
 
     [Header("Base Spawn Settings")]
-    public float baseSpawnInterval = 1.5f; // the seconds between spawns under normal conditions
+    public float baseSpawnInterval = 1.2f; // the seconds between spawns under normal conditions
     public int foodPerSpawn = 6;           // how many food items appear each spawn tick speed 
 
     // INTERNAL STATE

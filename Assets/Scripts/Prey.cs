@@ -15,8 +15,8 @@ public class Prey : MonoBehaviour
 
    
     private float hunger = 1f;           // 1 = full, 0 = starving. Ticks down over time.
-    private float hungerDrainRate = 0.05f; // how fast hunger drops per second
-    private float reproduceThreshold = 1.5f; // hunger value needed to trigger duplication
+    private float hungerDrainRate = 0.002f; // how fast hunger drops per second
+    private float reproduceThreshold = 1.1f; // hunger value needed to trigger duplication
     private Transform targetFood;        // the food object this pixel is currently walking to
     private Vector2 wanderDirection;     // current random direction moving when no food is targeted
     private float wanderTimer = 0f;
@@ -144,6 +144,13 @@ public class Prey : MonoBehaviour
                 nearest = food.transform;
             }
         }
+
+        float detectionRadius = visionRange * 3f;
+        if(nearestDist > detectionRadius)
+        {
+            return null;
+        }
+        
         return nearest;
     }
 

@@ -11,8 +11,8 @@ public class Predator : MonoBehaviour
     public float minCatchChance = 0.15f;  // worst case = 15% 
     public float maxCatchChance = 0.90f;  // best case = 90% (not a gauranteed catch)
 
-    public float starveTime = 8f;         // seconds before predator starves
-    public float eatCooldown = 4f; // CHANGED: seconds predator cant hunt; add this becuase they were eating everything... 
+    public float starveTime = 15f;         // seconds before predator starves
+    public float eatCooldown = 2f; // CHANGED: seconds predator cant hunt; add this becuase they were eating everything... 
 
 
     
