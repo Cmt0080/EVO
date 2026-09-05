@@ -41,7 +41,38 @@ public class SimulationManager : MonoBehaviour
     {
         SpawnInitialPrey();
     }
+    public void RestartSimulator()
+    {
+    // Destroy every prey, predator, and food object currently in the scene
+    foreach (GameObject prey in GameObject.FindGameObjectsWithTag("Prey"))
+    {
+        Destroy(prey);
+    }
+    foreach (GameObject predator in GameObject.FindGameObjectsWithTag("Predator"))
+    {
+        Destroy(predator);
+    }
+    foreach (GameObject food in GameObject.FindGameObjectsWithTag("Food"))
+    {
+        Destroy(food);
+    }
 
+    activePredators.Clear();
+
+    // resets toggle states to original positions
+    scarcityToggled = false;
+    droughtToggled = false;
+    if (foodSpawner != null)
+    {
+        foodSpawner.SetScarcity(false);
+        foodSpawner.SetDrought(false);
+    }
+    overpopulationWarned = false;
+
+    SpawnInitialPrey();
+
+    ShowNotification("Simulation Restarted");
+}
     void Update()
     {
         UpdatePopulationUI();

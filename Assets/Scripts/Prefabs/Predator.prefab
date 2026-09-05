@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 24482151347135349}
   m_Layer: 0
   m_Name: Predator
-  m_TagString: Untagged
+  m_TagString: Predator
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,3 +111,4 @@ MonoBehaviour:
   minCatchChance: 0.15
   maxCatchChance: 0.9
   starveTime: 8
+  eatCooldown: 4
