@@ -96,10 +96,12 @@ public class Predator : MonoBehaviour
             return;
         }
 
-        // Higher prey vision = lower catch chance. Vision trait is roughly 0.1 to 2 (see Prey.cs Mutate clamp).
-        // Normalize it to a 0-1 range, then use that to pick a catch chance between max and min.
+        //CHANGED: big and small pixels now have same chance of capture and then feeds into lerp of 15%-90%
         float normalizedVision = Mathf.InverseLerp(0.1f, 2f, preyScript.visionRange);
-        float catchChance = Mathf.Lerp(maxCatchChance, minCatchChance, normalizedVision);
+        float normalizedSize = Mathf.InverseLerp(0.1f,0.5f, preyScript.specSize);
+        float defenseRating = (normalizedVision + normalizedSize) / 2f;
+        float catchChance = Mathf.Lerp(maxCatchChance,minCatchChance,defenseRating);
+        
 
         float roll = Random.Range(0f, 1f);
 
@@ -115,7 +117,7 @@ public class Predator : MonoBehaviour
         targetPrey = null; // release target either way, re-evaluate next frame
     }
 
-    // ---------- WANDER (no prey in range) ----------
+    // WANDER (no prey in range) 
     void Wander()
     {
         wanderTimer -= Time.deltaTime;
