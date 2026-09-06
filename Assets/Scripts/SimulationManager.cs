@@ -23,6 +23,15 @@ public class SimulationManager : MonoBehaviour
     public FoodSpawner foodSpawner;
     public GameObject startScreenPanel;
 
+    [Header("Sound Effects")]
+    public AudioSource clickSoundSource;
+    public AudioSource musicSource;
+    public AudioClip clickSound;
+    public AudioClip gameOverSound;
+    public AudioClip winSound;
+    private bool extinctionAnnounced = false;
+    private bool gameStarted = false;
+
 
     [Header("Overpopulation Warning")]
     public int overpopulationThreshhold = 300;
@@ -46,16 +55,19 @@ public class SimulationManager : MonoBehaviour
 
     }
 
-    public void Play();
+    public void Play()
     {
         if (startScreenPanel != null)
         {
             startScreenPanel.SetActive(false);
         }
         SpawnInitialPrey();
+        gameStarted = true;
     }
     public void RestartSimulator()
     {
+    clickSoundSource.PlayOneShot(clickSound);
+
     // Destroy every prey, predator, and food object currently in the scene
     foreach (GameObject prey in GameObject.FindGameObjectsWithTag("Prey"))
     {
@@ -80,11 +92,17 @@ public class SimulationManager : MonoBehaviour
         foodSpawner.SetScarcity(false);
         foodSpawner.SetDrought(false);
     }
-    overpopulationWarned = false;
+        overpopulationWarned = false;
+        extinctionAnnounced = false;
 
-    SpawnInitialPrey();
+        if (musicSource != null)
+        {
+            musicSource.Play();
+        }
 
-    ShowNotification("Simulation Restarted");
+        SpawnInitialPrey();
+
+        ShowNotification("Simulation Restarted");
 }
     void Update()
     {
@@ -112,6 +130,8 @@ public class SimulationManager : MonoBehaviour
     // Toggle Button =  PREDATORS
     public void TogglePredators() // CHANGED: Toggle now is as many as you want; this way they die of starvation still but lead to overpopulation
     {
+        clickSoundSource.PlayOneShot(clickSound);
+
         for (int i = 0; i < predatorCountWhenActive; i++)
         {
             Vector3 pos = RandomPointInField();
@@ -126,6 +146,8 @@ public class SimulationManager : MonoBehaviour
     private bool scarcityToggled = false;
     public void ToggleScarcity()
     {
+        clickSoundSource.PlayOneShot(clickSound);
+
         scarcityToggled = !scarcityToggled;
         if (foodSpawner != null)
         {
@@ -138,6 +160,8 @@ public class SimulationManager : MonoBehaviour
     private bool droughtToggled = false;
     public void ToggleDrought()
     {
+        clickSoundSource.PlayOneShot(clickSound);
+
         droughtToggled = !droughtToggled;
         if (foodSpawner != null)
         {
@@ -164,6 +188,7 @@ public class SimulationManager : MonoBehaviour
         }
         else if (preyCount < 150 && overpopulationWarned)
         {
+            clickSoundSource.PlayOneShot(winSound);
             ShowNotification("Population Levels Normal");
             overpopulationWarned = false;
         }
@@ -190,11 +215,28 @@ public class SimulationManager : MonoBehaviour
     {
         if (traitAveragesText == null) return;
 
+
+
         GameObject[] preyList = GameObject.FindGameObjectsWithTag("Prey");
-        if (preyList.Length == 0)
+        if (gameStarted && preyList.Length == 0)
         {
             traitAveragesText.text = "Population has gone Extinct Please Retry";
+
+            if (!extinctionAnnounced)
+            {
+                clickSoundSource.PlayOneShot(gameOverSound);
+                if (musicSource != null)
+                {
+                    musicSource.Stop();
+                }
+                extinctionAnnounced = true;
+            }
+
             return;
+        }
+        else if (!gameStarted)
+        {
+            return; // nothing to show before the game has actually started
         }
 
         float totalSpeed = 0f;
@@ -216,9 +258,6 @@ public class SimulationManager : MonoBehaviour
             totalFoodEfficiency += p.foodEfficiency;
             totalSize += p.specSize;
 
-
-            totalSize += p.specSize;
-
             // Sorts prey into a size category based on its specSize (range is 0.1 to 0.5)
             if (p.specSize < 0.23f)
             {
@@ -231,11 +270,6 @@ public class SimulationManager : MonoBehaviour
             else
             {
                 largeCount++;
-            }
-
-            if (p.generation > highestGeneration)
-            {
-                highestGeneration = p.generation;
             }
 
             if (p.generation > highestGeneration)
